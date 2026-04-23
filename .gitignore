@@ -1,0 +1,7 @@
+.gocache/
+runlogs/
+*.exe
+*.wal
+*.snap
+*.log
+*.pid
