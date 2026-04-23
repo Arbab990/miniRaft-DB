@@ -1,12 +1,13 @@
-# \<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/zap.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/zap.svg)" width="32" height="32" align="center" /\> MiniRaft DB
+````markdown
+# ![MiniRaft DB](https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/zap.svg) MiniRaft DB
 
 **A fault-tolerant, strongly consistent distributed Key-Value database built from scratch in Go.**
 
-   
+![Go](https://img.shields.io/badge/LANGUAGE-GO_1.23+-00ADD8?style=flat-square&logo=go&logoColor=white) ![Consensus](https://img.shields.io/badge/CONSENSUS-RAFT-0052CC?style=flat-square) ![Dependencies](https://img.shields.io/badge/DEPENDENCIES-ZERO-238636?style=flat-square) ![Storage](https://img.shields.io/badge/STORAGE-KEY_VALUE-FF9900?style=flat-square)
 
 MiniRaft DB is not a wrapper around an existing consensus library. Every layer — the Raft consensus engine, the Write-Ahead Log, the TCP transport, the snapshot system, and the HTTP API — is hand-written in Go, without any external frameworks. It is the foundation for a suite of distributed systems products built on top of it.
 
------
+---
 
 ### What This Is
 
@@ -14,15 +15,15 @@ Most developers use distributed databases without understanding what makes them 
 
 When you run three instances of this binary on your machine, you get a cluster that:
 
-  * **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/check-circle.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/check-circle.svg)" width="16" height="16" align="absmiddle" /\>** Elects a leader automatically and re-elects when the leader dies
-  * **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/check-circle.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/check-circle.svg)" width="16" height="16" align="absmiddle" /\>** Guarantees a write is not confirmed until a majority of nodes have persisted it
-  * **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/check-circle.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/check-circle.svg)" width="16" height="16" align="absmiddle" /\>** Survives individual node crashes and replays its log on restart
-  * **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/check-circle.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/check-circle.svg)" width="16" height="16" align="absmiddle" /\>** Compacts its log automatically so disk usage stays bounded
-  * **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/check-circle.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/check-circle.svg)" width="16" height="16" align="absmiddle" /\>** Serves reads that are guaranteed to reflect the latest committed state
+* ![Check](https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/check-circle.svg) Elects a leader automatically and re-elects when the leader dies
+* ![Check](https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/check-circle.svg) Guarantees a write is not confirmed until a majority of nodes have persisted it
+* ![Check](https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/check-circle.svg) Survives individual node crashes and replays its log on restart
+* ![Check](https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/check-circle.svg) Compacts its log automatically so disk usage stays bounded
+* ![Check](https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/check-circle.svg) Serves reads that are guaranteed to reflect the latest committed state
 
 This is the same set of guarantees that etcd provides to Kubernetes, and that CockroachDB's replication layer provides to its storage engine.
 
------
+---
 
 ### Architecture
 
@@ -42,9 +43,9 @@ The system is structured in four layers, each with a clear responsibility.
 |                  Storage Layer                   |
 |       Write-Ahead Log · Snapshots · KV Store     |
 +--------------------------------------------------+
-```
+````
 
-#### \<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/cpu.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/cpu.svg)" width="20" height="20" align="absmiddle" /\> Raft Consensus Engine (`raft/`)
+####  Raft Consensus Engine (`raft/`)
 
 The brain of the system. It runs three concurrent processes on every node:
 
@@ -56,13 +57,13 @@ The implementation enforces all five of the Raft safety properties from the pape
 
 | Property | How It Is Enforced |
 | :--- | :--- |
-| **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/shield-check.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/shield-check.svg)" width="16" height="16" align="absmiddle" /\> Election Safety** | At most one leader per term, enforced by majority voting |
-| **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/shield-check.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/shield-check.svg)" width="16" height="16" align="absmiddle" /\> Leader Append-Only** | Leaders never overwrite their log |
-| **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/shield-check.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/shield-check.svg)" width="16" height="16" align="absmiddle" /\> Log Matching** | Followers verify `PrevLogIndex` and `PrevLogTerm` before accepting entries |
-| **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/shield-check.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/shield-check.svg)" width="16" height="16" align="absmiddle" /\> Leader Completeness** | Candidates must have a log at least as up-to-date as the majority |
-| **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/shield-check.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/shield-check.svg)" width="16" height="16" align="absmiddle" /\> State Machine Safety** | A log entry is only applied after being committed on a majority |
+| ** Election Safety** | At most one leader per term, enforced by majority voting |
+| ** Leader Append-Only** | Leaders never overwrite their log |
+| ** Log Matching** | Followers verify `PrevLogIndex` and `PrevLogTerm` before accepting entries |
+| ** Leader Completeness** | Candidates must have a log at least as up-to-date as the majority |
+| ** State Machine Safety** | A log entry is only applied after being committed on a majority |
 
-#### \<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/hard-drive.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/hard-drive.svg)" width="20" height="20" align="absmiddle" /\> Write-Ahead Log (`store/wal.go`)
+####  Write-Ahead Log (`store/wal.go`)
 
 Every log entry is persisted to disk before being acknowledged. The WAL format is:
 
@@ -72,7 +73,7 @@ Every log entry is persisted to disk before being acknowledged. The WAL format i
 
 On startup, the WAL is replayed from disk. If the process crashed mid-write, the corrupted tail is detected via CRC mismatch and truncated cleanly. This means the node always recovers to a consistent state regardless of when it was killed.
 
-#### \<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/camera.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/camera.svg)" width="20" height="20" align="absmiddle" /\> Snapshot and Log Compaction (`store/snapshot.go`, `raft/raft.go`)
+####  Snapshot and Log Compaction (`store/snapshot.go`, `raft/raft.go`)
 
 The WAL would grow unbounded without compaction. Every 100 committed entries, the node:
 
@@ -82,7 +83,7 @@ The WAL would grow unbounded without compaction. Every 100 committed entries, th
 
 When a lagging follower is too far behind for normal log replication, the leader sends it an `InstallSnapshot` RPC containing the full state, which the follower applies directly.
 
-#### \<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/network.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/network.svg)" width="20" height="20" align="absmiddle" /\> TCP Transport (`rpc/`)
+####  TCP Transport (`rpc/`)
 
 Nodes communicate over raw TCP with a custom binary framing protocol. There is no dependency on `net/rpc` or gRPC. Each message is framed as:
 
@@ -94,7 +95,7 @@ Six message types are defined: `RequestVote`, `RequestVoteReply`, `AppendEntries
 
 The `Transport` interface in `raft/interfaces.go` means the Raft engine has no knowledge of TCP. In the test suite, an in-memory transport is injected instead, allowing deterministic testing of consensus logic without any network.
 
-#### \<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/globe.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/globe.svg)" width="20" height="20" align="absmiddle" /\> HTTP API (`server/http.go`)
+####  HTTP API (`server/http.go`)
 
 Each node exposes three endpoints:
 
@@ -147,7 +148,7 @@ miniraft/
 **Requirements:** Go 1.23 or later. No external dependencies.
 
 ```bash
-git clone https://github.com/your-username/miniraft
+git clone [https://github.com/your-username/miniraft](https://github.com/your-username/miniraft)
 cd miniraft
 go build ./...
 ```
@@ -221,11 +222,11 @@ curl "http://localhost:8083/status"
 
 ### Fault Tolerance
 
-#### \<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/alert-triangle.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/alert-triangle.svg)" width="16" height="16" align="absmiddle" /\> Leader Failure
+####  Leader Failure
 
 Kill the leader terminal with `Ctrl+C`. Within one election timeout (150ms to 300ms), the two remaining nodes will detect the missing heartbeat, one will start an election, win a majority vote, and begin serving writes. The cluster self-heals with no human intervention.
 
-#### \<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/rotate-ccw.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/rotate-ccw.svg)" width="16" height="16" align="absmiddle" /\> Node Restart
+####  Node Restart
 
 Restart a killed node. It will:
 
@@ -234,7 +235,7 @@ Restart a killed node. It will:
 3.  Replay only the WAL entries after the snapshot index
 4.  Rejoin the cluster as a follower and receive any missed entries from the leader
 
-#### \<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/scissors.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/scissors.svg)" width="16" height="16" align="absmiddle" /\> Network Partition
+####  Network Partition
 
 If a minority partition (one node) loses contact with the other two, it will keep incrementing its term as it repeatedly fails to win elections. When the partition heals, the leader will detect the node's stale term, and the node will step down and synchronize its log. No data committed by the majority is ever lost.
 
@@ -250,10 +251,10 @@ The `chaos_test.go` file contains four deterministic fault injection tests. They
 
 | Test | What It Verifies |
 | :--- | :--- |
-| **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/beaker.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/beaker.svg)" width="16" height="16" align="absmiddle" /\> `TestLeaderElected`** | A leader is elected within 3 seconds in a healthy cluster |
-| **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/beaker.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/beaker.svg)" width="16" height="16" align="absmiddle" /\> `TestDataReplication`** | A write is applied on all three nodes after commit |
-| **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/beaker.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/beaker.svg)" width="16" height="16" align="absmiddle" /\> `TestLeaderFailover`** | A new leader is elected after the current leader is isolated |
-| **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/beaker.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/beaker.svg)" width="16" height="16" align="absmiddle" /\> `TestWriteAfterFailover`**| Writes succeed on a new leader after a leadership change |
+| ** `TestLeaderElected`** | A leader is elected within 3 seconds in a healthy cluster |
+| ** `TestDataReplication`** | A write is applied on all three nodes after commit |
+| ** `TestLeaderFailover`** | A new leader is elected after the current leader is isolated |
+| ** `TestWriteAfterFailover`**| Writes succeed on a new leader after a leadership change |
 
 -----
 
@@ -269,9 +270,9 @@ MiniRaft DB is the foundation layer for a suite of distributed systems products.
 
 | Product | What It Adds | Inspired By |
 | :--- | :--- | :--- |
-| **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/lock.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/lock.svg)" width="16" height="16" align="absmiddle" /\> MiniLock** | Secrets and configuration store with namespacing, TTLs, and watch/notify | HashiCorp Vault, etcd |
-| **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/eye.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/eye.svg)" width="16" height="16" align="absmiddle" /\> MiniWatch** | Feature flag and rollout engine with consistent flag evaluation across all nodes | LaunchDarkly, Unleash |
-| **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/activity.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/activity.svg)" width="16" height="16" align="absmiddle" /\> MiniFlow** | Distributed task queue with exactly-once execution and worker registry | Celery, SQS, Temporal |
+| ** MiniLock** | Secrets and configuration store with namespacing, TTLs, and watch/notify | HashiCorp Vault, etcd |
+| ** MiniWatch** | Feature flag and rollout engine with consistent flag evaluation across all nodes | LaunchDarkly, Unleash |
+| ** MiniFlow** | Distributed task queue with exactly-once execution and worker registry | Celery, SQS, Temporal |
 
 Each product inherits the fault tolerance, WAL persistence, snapshot compaction, and linearizable reads from this engine without reimplementing them.
 
@@ -292,6 +293,11 @@ Each product inherits the fault tolerance, WAL persistence, snapshot compaction,
 
 ### References
 
-  * **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/file-text.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/file-text.svg)" width="16" height="16" align="absmiddle" /\>** Ongaro, D. and Ousterhout, J. (2014). [In Search of an Understandable Consensus Algorithm](https://raft.github.io/raft.pdf)
-  * **\<img src="https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/external-link.svg" width="16" height="16" align="absmiddle" /\>** The Raft website and visualization: [raft.github.io](https://raft.github.io)
-  * **\<img src="[https://cdn.jsdelivr.net/gh/lucide-icons/lucide@main/icons/github.svg](https://www.google.com/search?q=https://cdn.jsdelivr.net/gh/lucide-icons/lucide%40main/icons/github.svg)" width="16" height="16" align="absmiddle" /\>** etcd's Raft implementation (reference for production patterns): [github.com/etcd-io/etcd](https://github.com/etcd-io/etcd)
+  * **** Ongaro, D. and Ousterhout, J. (2014). [In Search of an Understandable Consensus Algorithm](https://raft.github.io/raft.pdf)
+  * **** The Raft website and visualization: [raft.github.io](https://raft.github.io)
+  * **** etcd's Raft implementation (reference for production patterns): [github.com/etcd-io/etcd](https://github.com/etcd-io/etcd)
+
+<!-- end list -->
+
+```
+```
