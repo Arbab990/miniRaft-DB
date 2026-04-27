@@ -264,11 +264,11 @@ MiniRaft DB does not implement membership changes (adding or removing nodes from
 
 MiniRaft DB is the foundation layer for a suite of distributed systems products. Each product is a separate repository that clones this engine and adds a focused application layer on top of it.
 
-| Product | What It Adds | Inspired By |
-|---|---|---|
-| **MiniLock** | Secrets and configuration store with namespacing, TTLs, and watch/notify | HashiCorp Vault, etcd |
-| **MiniWatch** | Feature flag and rollout engine with consistent flag evaluation across all nodes | LaunchDarkly, Unleash |
-| **MiniFlow** | Distributed task queue with exactly-once execution and worker registry | Celery, SQS, Temporal |
+| Product | What It Adds | Inspired By | Redirect URL |
+|---|---|---|---|
+| **MiniLock** | Secrets and configuration store with namespacing, TTLs, and watch/notify | HashiCorp Vault, etcd | — |
+| **MiniWatch** | Feature flag and rollout engine with consistent flag evaluation across all nodes | LaunchDarkly, Unleash | — |
+| **MiniFlow** | Distributed task queue with exactly-once execution and worker registry | Celery, SQS, Temporal | [![MiniFlow](https://img.shields.io/badge/View_Repo-MiniFlow-00ADD8?style=flat-square&logo=github&logoColor=white)](https://github.com/Arbab990/MiniFlow) |
 
 Each product inherits the fault tolerance, WAL persistence, snapshot compaction, and linearizable reads from this engine without reimplementing them.
 
